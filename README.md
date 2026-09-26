@@ -84,7 +84,7 @@ To send emails, there are 3 basic calls:
  /jffs/scripts/SendEmail "Subject Line" -Body="/full/path/to/the/EmailBody.txt"
 ```
 
-Those are the basic CLI calls. Other optional arguments are available if you want to add/change the "From:" sender ID, include an email title line, change the default format from HTML to Plain Text, or add a secondary email address that will receive emails along with the primary recipient.
+Other optional arguments are available if you want to add/change the "**From:**" sender ID, include an email title line, change the default format from HTML to Plain Text, or add a secondary email address that will receive emails along with the primary recipient.
 
 To see the full description of the available arguments, run the following command:
 

@@ -1,4 +1,5 @@
-# SendEmail - Shell script tool to send email notifications
+# SendEmail
+Shell script tool to send email notifications
 
 ## v0.9.1
 ### Updated on 2026-Sep-25
@@ -16,7 +17,7 @@ SendEmail is free and open-source software licensed under the
 
 Official SendEmail releases are maintained through this repository:
 
-**https://github.com/ExtremeFiretop/MerlinAutoUpdate-Router**
+**https://github.com/Martinski4GitHub/SendEmail**
 
 
 ### Project Author
@@ -47,7 +48,7 @@ https://raw.githubusercontent.com/Martinski4GitHub/SendEmail/master/SendEmail.sh
 2. To install the script, use the following command:
 
 ```bash
-   /jffs/scripts/SendEmail.sh -install
+ /jffs/scripts/SendEmail.sh -install
 ```
 
 The script file is installed in the '/jffs/addons/SendEmail.d' directory with a symbolic link in the '/jffs/scripts' directory.
@@ -55,7 +56,7 @@ The script file is installed in the '/jffs/addons/SendEmail.d' directory with a 
 To get see the full list of command line arguments and switches, use the following command:
 
 ```bash
-   /jffs/scripts/SendEmail -help
+ /jffs/scripts/SendEmail -help
 ```
 
 
@@ -66,21 +67,21 @@ To send emails, there are 3 basic calls:
 1. To test and verify your current email settings from the AMTM email configuration file:
 
 ```bash
-   /jffs/scripts/SendEmail -test
+ /jffs/scripts/SendEmail -test
 ```
 
 
 2. To send a simple one-line email where the email message string is provided in the command line:
 
 ```bash
-   /jffs/script/SendEmail "Subject Line" "The Email Message Body String"
+ /jffs/script/SendEmail "Subject Line" "The Email Message Body String"
 ```
 
 
 3. To send a multi-line/multi-paragraph email where the contents of the email message body is provided via a local text file:
 
 ```bash
-   /jffs/scripts/SendEmail "Subject Line" -Body="/full/path/to/the/EmailBody.txt"
+ /jffs/scripts/SendEmail "Subject Line" -Body="/full/path/to/the/EmailBody.txt"
 ```
 
 Those are the basic CLI calls. Other optional arguments are available if you want to add/change the "From:" sender ID, include an email title line, change the default format from HTML to Plain Text, or add a secondary email address that will receive emails along with the primary recipient.
@@ -88,13 +89,13 @@ Those are the basic CLI calls. Other optional arguments are available if you wan
 To see the full description of the available arguments, run the following command:
 
 ```bash
-/jffs/scripts/SendEmail -help
-```bash
+ /jffs/scripts/SendEmail -help
+```
 
 To use the CLI menu for some available operations, simply type:
 
 ```bash
-/jffs/scripts/SendEmail
-```bash
+ /jffs/scripts/SendEmail
+```
 
 

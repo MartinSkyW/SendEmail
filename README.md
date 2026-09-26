@@ -27,10 +27,10 @@ Official SendEmail releases are maintained through this repository:
 
 ## Prerequisites
 
-- An ASUS router running Asuswrt-Merlin firmware.
+- An ASUS router running **Asuswrt-Merlin** firmware.
 - The JFFS scripts feature must be enabled in the firmware.
 - Access to the router's command line interface via the SSH server (i.e. Dropbear)
-- The user-defined email settings must be configured via AMTM (see **em.  Email settings** option).
+- The user-defined email settings must be configured via AMTM (see '**em.  Email settings**' option).
 
 
 ## Installation

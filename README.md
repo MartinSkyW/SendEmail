@@ -7,7 +7,7 @@ Shell script tool to send email notifications
 
 ## About
 
-The SendEmail script is a tool that makes it simple and easy to send email notifications from the CLI or from within any other script. It leverages the shared Custom Email Library script (/jffs/addons/shared-libs/CustomEMailFunctions.lib.sh) to send the emails, and the AMTM email configuration file which provides the user-defined email settings.
+The **SendEmail** script is a tool that makes it simple and easy to send email notifications from the CLI or from within any other script. It leverages the shared Custom Email Library script (**/jffs/addons/shared-libs/CustomEMailFunctions.lib.sh**) to send the emails, and the AMTM email configuration file which provides the user-defined email settings.
 
 
 ## License
@@ -30,7 +30,7 @@ Official SendEmail releases are maintained through this repository:
 - An ASUS router running Asuswrt-Merlin firmware.
 - The JFFS scripts feature must be enabled in the firmware.
 - Access to the router's command line interface via the SSH server (i.e. Dropbear)
-- The user-defined email settings must be configured via AMTM (see 'em.  Email settings' option).
+- The user-defined email settings must be configured via AMTM (see **em.  Email settings** option).
 
 
 ## Installation
@@ -51,7 +51,7 @@ https://raw.githubusercontent.com/Martinski4GitHub/SendEmail/master/SendEmail.sh
  /jffs/scripts/SendEmail.sh -install
 ```
 
-The script file is installed in the '/jffs/addons/SendEmail.d' directory with a symbolic link in the '/jffs/scripts' directory.
+The script file is installed in the '**/jffs/addons/SendEmail.d/**' directory with a symbolic link in the '**/jffs/scripts/**' directory.
 
 To get see the full list of command line arguments and switches, use the following command:
 

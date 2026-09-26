@@ -12,7 +12,7 @@ The **SendEmail** script is a tool that makes it simple and easy to send email n
 
 ## License
 
-SendEmail is free and open-source software licensed under the
+**SendEmail** is free and open-source software licensed under the
 [GNU General Public License version 3.0](LICENSE).
 
 Official SendEmail releases are maintained through this repository:

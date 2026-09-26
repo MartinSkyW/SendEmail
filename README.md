@@ -37,7 +37,7 @@ Official SendEmail releases are maintained through this repository:
 
 **Manual Installation**
 
-1. To Download the script to your router, use the following commands:
+1. To download the script to your router, use the following commands:
 
 ```bash
 curl  -LSs --retry 3 --retry-delay 5 --retry-connrefused \
@@ -84,7 +84,7 @@ To send emails, there are 3 basic calls:
  /jffs/scripts/SendEmail "Subject Line" -Body="/full/path/to/the/EmailBody.txt"
 ```
 
-Other optional arguments are available if you want to add/change the "**From:**" sender ID, include an email title line, change the default format from HTML to Plain Text, or add a secondary email address that will receive emails along with the primary recipient.
+Other optional arguments are available if you want to add/change the "**From:**" sender ID, include an email title line, change the default format from **HTML** to '**Plain Text**', or add a secondary email address that will receive emails along with the primary recipient.
 
 To see the full description of the available arguments, run the following command:
 

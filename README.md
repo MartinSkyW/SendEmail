@@ -98,4 +98,18 @@ To use the CLI menu for some available operations, simply type:
  /jffs/scripts/SendEmail
 ```
 
+###
+## Main Menu
+
+![CLI Main Menu](./Images/SendEmail_CLI_MainMenu.jpg)
+
+###
+## Email Configuration Options Menu
+
+![CLI Email Options Menu](./Images/SendEmail_CLI_ConfigOptionsMenu.jpg)
+
+###
+## Brief Help Page
+
+![CLI Brief Help Page](./Images/SendEmail_CLI_HelpBrief.jpg)
 

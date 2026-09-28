@@ -13,15 +13,15 @@
 #-------------------------------------------------------------------
 # Original Author: Martinski W.
 # Creation Date: 2026-Jun-14 [Martinski W.]
-# Last Modified: 2026-Sep-27 [Martinski W.]
+# Last Modified: 2026-Sep-28 [Martinski W.]
 #####################################################################
 set -u
 
-readonly SCRIPT_VERSION="v1.0.0"
-readonly SCRIPT_VERSTAG="26092700"
+readonly SCRIPT_VERSION="v1.0.1"
+readonly SCRIPT_VERSTAG="26092808"
 readonly SCRIPT_TNAME="SendEmail"
 readonly SCRIPT_FNAME="${SCRIPT_TNAME}.sh"
-SCRIPT_BRANCH="develop"
+SCRIPT_BRANCH="develop"   ##**SET TO "master" FOR RELEASE**##
 
 # Give FIRST priority to built-in binaries over any other #
 export PATH="/bin:/usr/bin:/sbin:/usr/sbin:$PATH"
@@ -570,7 +570,7 @@ _CheckEmailConfigFileFromAMTM_()
        "$showMsg" && \
        {
          _PrintMsg_ "\n${msgType}: Unable to send email notifications."
-         _PrintMsg_ "\n${MGNTct}AMTM email configuration file has not been set up.${CLRct}\n"
+         _PrintMsg_ "\n${MGNTct}AMTM email configuration file has NOT been set up.${CLRct}\n"
        }
        return 1
    fi
@@ -703,13 +703,17 @@ _CheckScriptInstallation_()
 #-----------------------------------------------------------#
 _ScriptInstallation_()
 {
-   local verStr  rawFPath  retCode=0  doKeyPress=true
+   local verStr  rawFPath  retCode=0  doKeyPress=true  showMenu=true
 
    mkdir -m 755 -p "$SCRIPT_INSTALL_PATH"
    if [ ! -d "$SCRIPT_INSTALL_PATH" ]
    then
        _PrintMsg_ "\n${REDct}**ERROR**${CLRct}: Unable to create directory path [$SCRIPT_INSTALL_PATH]\n"
        return 1
+   fi
+
+   if [ $# -gt 1 ] && [ "$2" = "-quiet" ]
+   then showMenu=false
    fi
 
    rawFPath="$(readlink -f "$1")"
@@ -737,7 +741,7 @@ _ScriptInstallation_()
    fi
    "$doKeyPress" && _PressAnyKey_
 
-   if [ -L "$theScriptSLink" ]
+   if [ -L "$theScriptSLink" ] && "$showMenu"
    then exec "$theScriptSLink"
    fi
    return "$retCode"
@@ -1576,7 +1580,7 @@ _MainMenuHandling_()
        read -r menuSelection
 
        case "$menuSelection" in
-           1) _ScriptInstallation_ "$scriptFilePath" -quiet
+           1) _ScriptInstallation_ "$scriptFilePath"
               exit "$?"
               ;;
           un) if ! _ConfirmYESorNO_ "\n Do you wish to continue with the uninstallation?"
@@ -1663,7 +1667,8 @@ case "$1" in
         exit 0
         ;;
     -install)
-        _ScriptInstallation_ "$0"
+        shift
+        _ScriptInstallation_ "$0" "$@"
         exit "$?"
         ;;
     -uninstall)
@@ -1724,7 +1729,7 @@ do
            shift
            cemIsVerboseMode=true
            ;;
-       *) 
+       *)
          if echo "$PARAM" | grep -qE '^-From=.+'
          then
              emailSenderID="${PARAM##*=}"

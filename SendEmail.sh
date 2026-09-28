@@ -298,10 +298,7 @@ When adding the ${MGNTct}-From=${CYANct}"MyUniqueSenderID"${CLRct} argument, the
 in the email notification sent by the command invocation.
 
 If you want to change a global default for ALL command executions, modify the value
-in the configuration file. Valid characters are only alphanumeric, period, hyphen,
-underscore, and at (@) symbols.
-
-${MGNTct}emailSenderID=${CYANct}"MyUniqueSenderID"${CLRct}
+in the configuration file via the CLI menu ("${GRNct}cf${CLRct}. Configure default email options").
 ----------------------------------------------------------------------------
 EOF4
 }
@@ -703,7 +700,8 @@ _CheckScriptInstallation_()
 #-----------------------------------------------------------#
 _ScriptInstallation_()
 {
-   local verStr  rawFPath  retCode=0  doKeyPress=true  showMenu=true
+   local verStr  rawFPath  retCode=0  doKeyPress=true
+   local showMenu=true  quietArg=""
 
    mkdir -m 755 -p "$SCRIPT_INSTALL_PATH"
    if [ ! -d "$SCRIPT_INSTALL_PATH" ]
@@ -713,7 +711,7 @@ _ScriptInstallation_()
    fi
 
    if [ $# -gt 1 ] && [ "$2" = "-quiet" ]
-   then showMenu=false
+   then quietArg="$2" ; showMenu=false
    fi
 
    rawFPath="$(readlink -f "$1")"
@@ -735,13 +733,16 @@ _ScriptInstallation_()
 
    if ! _CheckEmailConfigFileFromAMTM_ -install
    then
+       _PressAnyKey_ ; doKeyPress=false
+   fi
+   if ! _CheckScriptInstallation_
+   then
        retCode=1
-       _PressAnyKey_
-       doKeyPress=false
+       _PressAnyKey_ ; doKeyPress=false
    fi
    "$doKeyPress" && _PressAnyKey_
 
-   if [ -L "$theScriptSLink" ] && "$showMenu"
+   if "$showMenu" && [ -L "$theScriptSLink" ]
    then exec "$theScriptSLink"
    fi
    return "$retCode"

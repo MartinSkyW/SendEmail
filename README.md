@@ -2,7 +2,7 @@
 Shell script tool to send email notifications
 
 ## v1.0.1
-### Updated on 2026-Sep-28
+### Updated on 2026-Sep-29
 
 
 ## About

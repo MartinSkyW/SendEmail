@@ -13,12 +13,12 @@
 #-------------------------------------------------------------------
 # Original Author: Martinski W.
 # Creation Date: 2026-Jun-14 [Martinski W.]
-# Last Modified: 2026-Sep-28 [Martinski W.]
+# Last Modified: 2026-Sep-29 [Martinski W.]
 #####################################################################
 set -u
 
 readonly SCRIPT_VERSION="v1.0.1"
-readonly SCRIPT_VERSTAG="26092823"
+readonly SCRIPT_VERSTAG="26092900"
 readonly SCRIPT_TNAME="SendEmail"
 readonly SCRIPT_FNAME="${SCRIPT_TNAME}.sh"
 SCRIPT_BRANCH="develop"   ##**SET TO "master" FOR RELEASE**##
@@ -740,10 +740,11 @@ _ScriptInstallation_()
        retCode=1
        _PressAnyKey_ ; doKeyPress=false
    fi
-   "$doKeyPress" && _PressAnyKey_
 
    if "$showMenu" && [ -L "$theScriptSLink" ]
-   then exec "$theScriptSLink"
+   then
+       "$doKeyPress" && _PressAnyKey_
+       exec "$theScriptSLink"
    fi
    return "$retCode"
 }

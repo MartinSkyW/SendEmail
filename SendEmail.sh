@@ -930,8 +930,10 @@ _CheckScriptVersionUpdate_()
        return 1
    fi
 
-   [ "$updateType" = "check" ] && "$isVerboseMode" && \
-   _PrintMsg_ "\nChecking for ${GRNct}${SCRIPT_FNAME}${CLRct} script updates...\n"
+   echo
+   if [ "$updateType" = "check" ] && "$isVerboseMode"
+   then _PrintMsg_ "Checking for ${GRNct}${SCRIPT_FNAME}${CLRct} script updates...\n"
+   fi
 
    retCode=1 ; urlDLCount=0 ; urlDLMax=2
    for theScriptURL in "$SCRIPT_URL_REPO1" "$SCRIPT_URL_REPO2"
@@ -945,7 +947,7 @@ _CheckScriptVersionUpdate_()
 
    if [ "$retCode" -ne 0 ] || [ ! -s "$theTmpFilePath" ]
    then
-       _PrintMsg_ "\nThe email script ${REDct}${SCRIPT_FNAME}${CLRct} was NOT updated.\n"
+       _PrintMsg_ "\nThe script ${REDct}${SCRIPT_FNAME}${CLRct} was NOT updated.\n"
        return 1
    fi
 
@@ -983,7 +985,7 @@ _CheckScriptVersionUpdate_()
    mv -f "$theTmpFilePath" "$theScriptFPath"
    chmod 755 "$theScriptFPath"
    _ScriptSymbolicLink_ create
-   _PrintMsg_ "The email script ${GRNct}${SCRIPT_FNAME}${CLRct} was updated to the latest version ${theVerStr}.\n"
+   _PrintMsg_ "The script ${GRNct}${SCRIPT_FNAME}${CLRct} was updated to the latest version ${theVerStr}.\n"
 
    return 0
 }

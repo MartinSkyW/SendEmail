@@ -18,7 +18,7 @@
 set -u
 
 readonly SCRIPT_VERSION="v1.0.1"
-readonly SCRIPT_VERSTAG="26092808"
+readonly SCRIPT_VERSTAG="26092823"
 readonly SCRIPT_TNAME="SendEmail"
 readonly SCRIPT_FNAME="${SCRIPT_TNAME}.sh"
 SCRIPT_BRANCH="develop"   ##**SET TO "master" FOR RELEASE**##
@@ -539,9 +539,9 @@ _SetScriptConfigOption_()
 	then
 		if printf '%s\n' "$2" | grep -qE '^(true|false)$'
 		then
-			sed -i "s/${1}=.*/${1}=${2}/" "$SCRIPT_CONFIG_FPATH"
+			sed -i "s/^${1}=.*/${1}=${2}/" "$SCRIPT_CONFIG_FPATH"
 		else
-			sed -i "s/${1}=.*/${1}='${newVal}'/" "$SCRIPT_CONFIG_FPATH"
+			sed -i "s/^${1}=.*/${1}='${newVal}'/" "$SCRIPT_CONFIG_FPATH"
 		fi
 	fi
 	return 0
@@ -1127,7 +1127,7 @@ _Send_EMail_Msg_()
 }
 
 #-----------------------------------------------------------#
-_Send_Email_TEST_()
+_Send_EMail_TEST_()
 {
     local retCode  emailSubjectStr
     local emailBodyTestFPath="${emailBodyCFPath}.TEST"
@@ -1530,7 +1530,7 @@ _ConfigurationOptionsMenu_()
                ;;
 			4) if "$isEmailConfigEnabledInAMTM"
                then
-                   _Send_Email_TEST_
+                   _Send_EMail_TEST_
                else
                    printf "\n Testing email notification setup is ${MGNTct}NOT${CLRct} available."
 	               printf "\n AMTM email configuration file MUST be set up first.\n"
@@ -1784,7 +1784,7 @@ fi
 if [ "$1" = "-test" ]
 then
     shift
-    _Send_Email_TEST_ "$@"
+    _Send_EMail_TEST_ "$@"
     exit "$?"
 fi
 

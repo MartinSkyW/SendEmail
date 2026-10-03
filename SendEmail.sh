@@ -13,12 +13,12 @@
 #-------------------------------------------------------------------
 # Original Author: Martinski W.
 # Creation Date: 2026-Jun-14 [Martinski W.]
-# Last Modified: 2026-Sep-29 [Martinski W.]
+# Last Modified: 2026-Oct-03 [Martinski W.]
 #####################################################################
 set -u
 
-readonly SCRIPT_VERSION="v1.0.1"
-readonly SCRIPT_VERSTAG="26092900"
+readonly SCRIPT_VERSION="v1.1.0"
+readonly SCRIPT_VERSTAG="26100300"
 readonly SCRIPT_TNAME="SendEmail"
 readonly SCRIPT_FNAME="${SCRIPT_TNAME}.sh"
 SCRIPT_BRANCH="develop"   ##**SET TO "master" FOR RELEASE**##
@@ -29,6 +29,7 @@ export PATH="/bin:/usr/bin:/sbin:/usr/sbin:$PATH"
 readonly scriptDirPath="$(/usr/bin/dirname "$0")"
 readonly scriptFileName="${0##*/}"
 readonly scriptFNameTag="${scriptFileName%.*}"
+readonly thePID="$(printf "%05d" "$$")"
 
 readonly JFFS_ADDONS_DIR="/jffs/addons"
 readonly JFFS_SCRIPTS_DIR="/jffs/scripts"
@@ -66,13 +67,15 @@ SCRIPT_URL_REPO2="${SCRIPT_URL_BASE2}/$SCRIPT_BRANCH"
 readonly TMP_DIR="/tmp"
 readonly TEMP_DIR="/tmp/var/tmp"
 readonly curlHTTPstatusStr="HTTP_Status_Code"
-readonly curlTmpLogFPath="${TEMP_DIR}/tmpSendCurl_${scriptFNameTag}_$$.TMP.LOG"
-readonly curlErrLogFPath="${TEMP_DIR}/tmpSendCurl_${scriptFNameTag}_$$.ERR.LOG"
-readonly emailBodyCFPath="${TEMP_DIR}/tmpEMailBody_${scriptFNameTag}.$$.TMP"
+readonly curlTmpLogFPath="${TEMP_DIR}/tmpSendCurl_${scriptFNameTag}_${thePID}.TMP.LOG"
+readonly curlErrLogFPath="${TEMP_DIR}/tmpSendCurl_${scriptFNameTag}_${thePID}.ERR.LOG"
+readonly emailBodyCFPath="${TEMP_DIR}/tmpEMailBody_${scriptFNameTag}.${thePID}.TMP"
 
 readonly emailUpdateMutexFLock_FD=783
 readonly emailUpdateMutexFLock_FN="${TEMP_DIR}/CEMailUpdateCheck.FLOCK"
 emailUpdateMutexFLock_OK=false  #To check if/when we own the Lock#
+
+readonly emailOptionalArgs="From|Title|Body|Attach|CCName|CCEmail"
 
 readonly CLRct="\e[0m"
 readonly BOLDct="\e[1m"
@@ -115,6 +118,7 @@ emailCCName=""
 emailCCEmail=""
 emailSenderID=""
 emailBodyTitle=""
+emailAttachFile=""
 
 #Configuration Defaults#
 doShowErrorMsgs=true
@@ -259,6 +263,14 @@ To send email notifications [the order of the arguments is important]:
 
   ${GRNct}$SCRIPT_TNAME ${MGNTct}-From=${CLRct}"SenderID" "Subject Line" ${MGNTct}-Body=${CLRct}"${TMP_DIR}/theEmailBody.txt" ${MGNTct}-Title=${CLRct}"Email Body Title Line"
 
+
+Optional command-line argument to add an email file attachment:
+
+    ${MGNTct}-Attach=${CLRct}"/full/path/to/file/Attachment.txt"
+ 
+Optional command-line argument to add a secondary email address:
+ 
+    ${MGNTct}-CCName=${CLRct}"CC_SenderID" ${MGNTct}-CCEmail=${CLRct}"CC_Address@email.com"
 EOF3
 
    cat <<EOF4 | xargs -0 echo -e
@@ -345,6 +357,17 @@ To send simple email notifications:
  ${GRNct}$SCRIPT_TNAME${CLRct} "SubjectLine" "EmailBodySTRING" ${MGNTct}-Title=${CLRct}"EmailBodyTITLE"
  ${GRNct}$SCRIPT_TNAME${CLRct} "SubjectLine" ${MGNTct}-Body=${CLRct}"EmailBodyFILE"
  ${GRNct}$SCRIPT_TNAME${CLRct} "SubjectLine" ${MGNTct}-Body=${CLRct}"EmailBodyFILE" ${MGNTct}-Title=${CLRct}"EmailBodyTITLE"
+
+Optional command line email arguments:
+ 
+ ${GRNct}$SCRIPT_TNAME ${MGNTct}-From=${CLRct}"SenderID" ...
+ ${GRNct}$SCRIPT_TNAME ${MGNTct}-Attach=${CLRct}"/full/path/to/file/Attachment.txt" ...
+ ${GRNct}$SCRIPT_TNAME ${MGNTct}-CCName=${CLRct}"CC_SenderID" ${MGNTct}-CCEmail=${CLRct}"CC_Address@email.com" ...
+
+Optional command line email argument switches:
+
+ ${GRNct}$SCRIPT_TNAME${CLRct} ${CYANct}-html${CLRct} "SubjectLine" ...
+ ${GRNct}$SCRIPT_TNAME${CLRct} ${CYANct}-ptext${CLRct} "SubjectLine" ...
 -----------------------------------------------------------------------
 EOF1
 }
@@ -480,7 +503,7 @@ _GetScriptConfigOption_()
 	if [ $# -eq 0 ] || [ -z "$1" ]
 	then echo ; return 1
 	fi
-	local keyPair  defValue=""
+	local keyPair  keyValue  defValue=""
 
 	if [ $# -gt 1 ] && [ -n "$2" ]
 	then defValue="$2"
@@ -504,7 +527,9 @@ _GetScriptConfigOption_()
 		fi
 		echo "$defValue"
 	else
-		echo "$keyPair" | cut -d'=' -f2- | sed "s/['\"]//g"
+		keyValue="$(echo "$keyPair" | cut -d'=' -f2- | sed "s/['\"]//g")"
+		[ "$keyValue" = 'TBD' ] && keyValue=''
+		printf '%s\n' "$keyValue"
 	fi
 	return 0
 }
@@ -531,13 +556,18 @@ _SetScriptConfigOption_()
 
 	if ! grep -qE "^${1}=.*" "$SCRIPT_CONFIG_FPATH"
 	then
-		if printf '%s\n' "$2" | grep -qE '^(true|false)$'
+		if [ "$2" = 'TBD' ]
+		then echo "${1}=''" >> "$SCRIPT_CONFIG_FPATH"
+		elif printf '%s\n' "$2" | grep -qE '^(true|false)$'
 		then echo "${1}=${2}" >> "$SCRIPT_CONFIG_FPATH"
 		else echo "${1}='${2}'" >> "$SCRIPT_CONFIG_FPATH"
 		fi
 	elif ! grep -qE "^${1}=$newVal" "$SCRIPT_CONFIG_FPATH"
 	then
-		if printf '%s\n' "$2" | grep -qE '^(true|false)$'
+		if [ "$2" = 'TBD' ]
+		then
+			sed -i "s/^${1}=.*/${1}=''/" "$SCRIPT_CONFIG_FPATH"
+		elif printf '%s\n' "$2" | grep -qE '^(true|false)$'
 		then
 			sed -i "s/^${1}=.*/${1}=${2}/" "$SCRIPT_CONFIG_FPATH"
 		else
@@ -771,7 +801,7 @@ _DownloadScriptFile_()
    fi
 
    local srcFilePathURL="${1}/$2"
-   local tempFilePathDL="${TEMP_DIR}/${2}.DL.$$.TMP"
+   local tempFilePathDL="${TEMP_DIR}/${2}.DL.${thePID}.TMP"
    local theDestFName="$2"  theDestFPath="$3"
    local theMsgStr  logMsgStr
    local curlRetCode  statusCODE  statusSTRx  httpStatusSTR
@@ -895,7 +925,7 @@ _CheckScriptVersionUpdate_()
 {
    local dlVersionStr  dlVersTagStr  scriptMD5  dlTempMD5
    local scriptVerNum  dlFileVerNum  theVerStr  updateType
-   local theTmpFilePath="${TEMP_DIR}/${SCRIPT_TNAME}.$$.TMP.SH"
+   local theTmpFilePath="${TEMP_DIR}/${SCRIPT_TNAME}.${thePID}.TMP.SH"
    local retCode  urlDLCount  urlDLMax
    local isVerboseMode="$cemIsVerboseMode"
 
@@ -1030,9 +1060,9 @@ _CheckCustomEmailLibraryScript_()
 }
 
 #-----------------------------------------------------------#
-_IsOptionalEmailArg_()   ##*TBD*: '-Attach='??##
+_IsOptionalEmailArg_()
 {
-   if printf '%s\n' "$1" | grep -qE '^-(From|Title|Body|CCName|CCEmail)=.+'
+   if printf '%s\n' "$1" | grep -qE "^-($emailOptionalArgs)=.+"
    then return 0
    else return 1
    fi
@@ -1041,7 +1071,9 @@ _IsOptionalEmailArg_()   ##*TBD*: '-Attach='??##
 #-----------------------------------------------------------#
 _CheckValidParams_()
 {
-   if ! printf '%s\n' "$1" | grep -qE '^[-].+' || _IsOptionalEmailArg_ "$1" || \
+   if { ! printf '%s\n' "$1" | grep -qE '^[-].+' && \
+        ! printf '%s\n' "$1" | grep -qE "^($emailOptionalArgs)=.+" ; } || \
+      _IsOptionalEmailArg_ "$1" || \
       printf '%s\n' "$1" | grep -qE '^-(test|install|uninstall|checkupdate|forceupdate|stable|develop|showconf|version|getvers|html|ptext|quiet|silent|verbose)$'
    then return 0
    else return 1
@@ -1062,8 +1094,7 @@ _Send_EMail_Msg_()
        _LogMsg_ "$logMsgStr" "$pLogERROR" NOECHO
        return 1
    fi
-   local retCode  showErrorMsgs=false
-   local emailBodyMsgStr  emailBodyFile=""  emailBodyTitleStr=""
+   local retCode  showErrorMsgs=false  emailBodyFile=""
    local emailBodySendFPath="${emailBodyCFPath}.SEND"
 
    if [ $# -lt 2 ] || [ -z "$1" ] || [ -z "$2" ]
@@ -1077,7 +1108,7 @@ _Send_EMail_Msg_()
        emailBodyFile="${2##*=}"
        if [ ! -s "$emailBodyFile" ]
        then
-           _PrintMsg_ "\n${REDct}**ERROR**${CLRct}: Email body message file [$emailBodyFile] NOT found.\n"
+           _PrintMsg_ "\n${REDct}**ERROR**${CLRct}: Email body message file [${REDct}${emailBodyFile}${CLRct}] NOT found.\n"
            return 1
        fi
        cp -fp "$emailBodyFile" "$emailBodySendFPath"
@@ -1093,6 +1124,12 @@ _Send_EMail_Msg_()
        return 1
    fi
 
+   if [ -n "$emailAttachFile" ] && [ ! -s "$emailAttachFile" ]
+   then
+       _PrintMsg_ "\n${REDct}**ERROR**${CLRct}: Email file attachment [${REDct}${emailAttachFile}${CLRct}] NOT found.\n"
+       return 1
+   fi
+
    ## ONLY for DEBUG/TEST purposes set to 'true' ##
    cemIsDebugMode=false
 
@@ -1104,16 +1141,16 @@ _Send_EMail_Msg_()
    if [ -n "$emailSenderID" ] && [ "$emailSenderID" != 'TBD' ]
    then FROM_NAME="$emailSenderID"
    fi
-   [ -n "$emailBodyTitle" ] && emailBodyTitleStr="$emailBodyTitle"
 
-   _SendEMailNotification_CEM_ "$1" -F="$emailBodySendFPath" "$emailBodyTitleStr"
+   _SendEMailNotification_CEM_ "$1" -F="$emailBodySendFPath" ${emailBodyTitle:+"$emailBodyTitle"} ${emailAttachFile:+-Attach="$emailAttachFile"}
    retCode="$?"
 
    if [ "$retCode" -eq 0 ]
    then
        logTag=""
        logMsg="The email notification [${GRNct}${1}${CLRct}] was sent successfully."
-       if [ -n "$emailBodyFile" ] && echo "$emailBodyFile" | grep -qE '^/tmp/.+'
+       if [ -n "$emailBodyFile" ] && \
+          echo "$emailBodyFile" | grep -qE '^/tmp/.+'
        then rm -f "$emailBodyFile"
        fi
    else
@@ -1132,15 +1169,17 @@ _Send_EMail_Msg_()
 #-----------------------------------------------------------#
 _Send_EMail_TEST_()
 {
-    local retCode  emailSubjectStr
     local emailBodyTestFPath="${emailBodyCFPath}.TEST"
+    local retCode  emailSubjectStr  resetSenderID=false
 
+    if [ -z "$emailSenderID" ]
+    then
+        resetSenderID=true
+        emailSenderID="SendEmail_TEST"
+    fi
     if [ $# -gt 0 ] && [ -n "$1" ]
     then emailSubjectStr="$1"
     else emailSubjectStr="TEST Email"
-    fi
-    if [ -z "$emailSenderID" ]
-    then emailSenderID="Email_TEST"
     fi
     if [ -z "$emailBodyTitle" ]
     then emailBodyTitle="TESTING Email Notifications"
@@ -1155,6 +1194,8 @@ _Send_EMail_TEST_()
 
     _Send_EMail_Msg_ "$emailSubjectStr" -Body="$emailBodyTestFPath"
     retCode="$?"
+
+    "$resetSenderID" && emailSenderID=""
 
     rm -f "$emailBodyTestFPath"
     return "$retCode"
@@ -1204,14 +1245,6 @@ _InvalidMenuOptionHandler_()
 	then printf "\n Invalid input [${REDct}${menuSelection}${CLRct}]"
 	fi
 	printf "\n Select a valid menu option\n"
-	_PressAnyKey_
-}
-
-#-----------------------------------------------------------#
-_InvalidEmailOptionHandler_()
-{
-	printf "\n The email notification options are ${MGNTct}NOT${CLRct} available."
-	printf "\n AMTM email configuration file MUST be set up first.\n"
 	_PressAnyKey_
 }
 
@@ -1634,6 +1667,7 @@ _MainMenuHandling_()
 
 #-----------------------------------------------------------#
 quietARG=""
+exitCode=0
 showUsage=false
 usageLong=false
 
@@ -1648,6 +1682,7 @@ then
     showUsage=true ; usageLong=true
 elif ! _CheckValidParams_ "$1"
 then
+    exitCode=1
     _PrintMsg_ "\n${REDct}**ERROR**${CLRct}: INVALID argument [${REDct}${1}${CLRct}] was provided.\n"
     showUsage=true ; _PressAnyKey_
 fi
@@ -1658,7 +1693,7 @@ then
     then _ShowUsageVerbose_
     else _ShowUsageConcise_
     fi
-    exit 0
+    exit "$exitCode"
 fi
 
 case "$1" in
@@ -1734,20 +1769,31 @@ do
            cemIsVerboseMode=true
            ;;
        *)
+         if ! _CheckValidParams_ "$PARAM"
+         then
+             _PrintMsg_ "\n${REDct}**ERROR**${CLRct}: INVALID argument [${REDct}${PARAM}${CLRct}] was provided.\n"
+             _PressAnyKey_ ; _ShowUsageConcise_
+             exit 1
+         fi
          if echo "$PARAM" | grep -qE '^-From=.+'
          then
              emailSenderID="${PARAM##*=}"
          elif echo "$PARAM" | grep -qE '^-Title=.+'
          then
              emailBodyTitle="${PARAM##*=}"
+         elif echo "$PARAM" | grep -qE '^-Attach=.+'
+         then
+             emailAttachFile="${PARAM##*=}"
          elif echo "$PARAM" | grep -qE '^-CCName=.+'
          then
              emailCCName="${PARAM##*=}"
+             [ "$emailCCName" = 'TBD' ] && emailCCName=''
          elif echo "$PARAM" | grep -qE '^-CCEmail=.+'
          then
              emailCCEmail="${PARAM##*=}"
+             [ "$emailCCEmail" = 'TBD' ] && emailCCEmail=''
          else
-             theListOfARGs="${theListOfARGs:+$theListOfARGs} '$PARAM'"
+             theListOfARGs="${theListOfARGs:+$theListOfARGs }'$PARAM'"
          fi
          shift
          ;;

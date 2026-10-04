@@ -1,8 +1,8 @@
 # SendEmail
 Shell script tool to send email notifications
 
-## v1.0.0
-### Updated on 2026-Sep-27
+## v1.1.0
+### Updated on 2026-Oct-04
 
 
 ## About
@@ -12,7 +12,7 @@ The **SendEmail** script is a tool that makes it simple and easy to send email n
 
 ## License
 
-**SendEmail** is free and open-source software licensed under the
+The **SendEmail** script is free and open-source software licensed under the
 [GNU General Public License version 3.0](LICENSE).
 
 Official SendEmail releases are maintained through this repository:

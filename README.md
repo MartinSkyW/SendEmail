@@ -108,7 +108,7 @@ Command-line argument to send an email file attachment:
 ```
 
 This argument allows users to send a single text file as an email attachment. The text file type is determined by its filename extension. The following extensions will tag the attachment as a text file:<br>
-&nbsp;**.txt**, &nbsp;**.log**, &nbsp;**.cfg**, &nbsp;**.conf**, &nbsp;**.sh**, &nbsp;**.js**, &nbsp;**.json**, &nbsp;**.TXT**, &nbsp;**.LOG**, &nbsp;and &nbsp;**.CFG**
+&nbsp;&emsp;**.txt**, &nbsp;**.log**, &nbsp;**.cfg**, &nbsp;**.conf**, &nbsp;**.sh**, &nbsp;**.js**, &nbsp;**.json**, &nbsp;**.TXT**, &nbsp;**.LOG**, &nbsp;and &nbsp;**.CFG**
 
 The maximum file size allowed for an email attachment is **10MB**. Anything larger will generate an error, and the email will **not** be sent. This check is done to prevent users from accidentally sending a 30MB (or ~100MB) attachment. 10MB should be large enough to send any useful text/log file with relevant information (e.g. for troubleshooting or diagnostic purposes).
 

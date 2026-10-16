@@ -1,7 +1,7 @@
 # SendEmail
 Shell script tool to send email notifications
 
-## v1.1.0
+## v1.1.1
 ### Updated on 2026-Oct-16
 
 

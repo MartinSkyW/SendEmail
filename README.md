@@ -1,8 +1,8 @@
 # SendEmail
 Shell script tool to send email notifications
 
-## v1.1.0
-### Updated on 2026-Oct-04
+## v1.1.1
+### Updated on 2026-Oct-16
 
 
 ## About
@@ -97,6 +97,23 @@ To use the CLI menu for some available operations, simply type:
 ```bash
  /jffs/scripts/SendEmail
 ```
+
+
+### Email File Attachment 
+
+Command-line argument to send an email file attachment:
+
+```bash
+  Attach="/file/path/to/emailAttachment.txt"
+```
+
+This argument allows users to send a single text file as an email attachment. The text file type is determined by its filename extension. The following extensions will tag the attachment as a text file:<br>
+&nbsp;&emsp;**.txt**, &nbsp;**.log**, &nbsp;**.cfg**, &nbsp;**.conf**, &nbsp;**.sh**, &nbsp;**.js**, &nbsp;**.json**, &nbsp;**.TXT**, &nbsp;**.LOG**, &nbsp;and &nbsp;**.CFG**
+
+The maximum file size allowed for an email attachment is **10MB**. Anything larger will generate an error, and the email will **not** be sent. This check is done to prevent users from accidentally sending a 30MB (or ~100MB) attachment. 10MB should be large enough to send any useful text/log file with relevant information (e.g. for troubleshooting or diagnostic purposes).
+
+Other file types (**jpg**, **png**, **bmp**, **gif**, **zip**, **gzip**, **tar**, **pdf**) are also allowed as file attachments. The maximum file size applies to **all** file types. Note that some email providers do not accept certain file types as email attachments.
+
 
 ###
 ## Main Menu

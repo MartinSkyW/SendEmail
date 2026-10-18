@@ -13,12 +13,12 @@
 #-------------------------------------------------------------------
 # Original Author: Martinski W.
 # Creation Date: 2026-Jun-14 [Martinski W.]
-# Last Modified: 2026-Oct-15 [Martinski W.]
+# Last Modified: 2026-Oct-18 [Martinski W.]
 #####################################################################
 set -u
 
-readonly SCRIPT_VERSION="v1.1.1"
-readonly SCRIPT_VERSTAG="26101522"
+readonly SCRIPT_VERSION="v1.1.2"
+readonly SCRIPT_VERSTAG="26101808"
 readonly SCRIPT_TNAME="SendEmail"
 readonly SCRIPT_FNAME="${SCRIPT_TNAME}.sh"
 SCRIPT_BRANCH="develop"
@@ -1819,6 +1819,8 @@ do
              emailCCEmail="${PARAM##*=}"
              [ "$emailCCEmail" = 'TBD' ] && emailCCEmail=''
          else
+             # Allow single quotes in "Subject" string #
+             PARAM="$(echo "$PARAM" | sed "s/'/'\\\\''/g")"
              theListOfARGs="${theListOfARGs:+$theListOfARGs }'$PARAM'"
          fi
          shift

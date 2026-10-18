@@ -1097,9 +1097,8 @@ _IsOptionalEmailArg_()
 #-----------------------------------------------------------#
 _CheckValidParams_()
 {
-   if { ! printf '%s\n' "$1" | grep -qE '^[-].+' && \
-        ! printf '%s\n' "$1" | grep -qE "^($emailOptionalArgs)=.+" ; } || \
-      _IsOptionalEmailArg_ "$1" || \
+   if _IsOptionalEmailArg_ "$1" || \
+      ! printf '%s\n' "$1" | grep -qE "^($emailOptionalArgs)=.+" || \
       printf '%s\n' "$1" | grep -qE '^-(test|install|uninstall|checkupdate|forceupdate|stable|develop|showconf|version|getvers|html|ptext|quiet|silent|verbose)$'
    then return 0
    else return 1

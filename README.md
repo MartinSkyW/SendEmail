@@ -35,7 +35,7 @@ Official SendEmail releases are maintained through this repository:
 
 ## Installation
 
-**Manual Installation**
+### Manual Installation
 
 1. To download the script to your router, use the following commands:
 
@@ -51,10 +51,9 @@ https://raw.githubusercontent.com/Martinski4GitHub/SendEmail/master/SendEmail.sh
  /jffs/scripts/SendEmail.sh -install
 ```
 
+### Installation via AMTM
 
-**Installation via AMTM**
-
-The SendEmail script tool can also be installed via AMTM (see '**se**' option).
+The SendEmail script can also be installed via AMTM (see '**se**' option).
 
 
 The script file is installed in the '**/jffs/addons/SendEmail.d/**' directory with a symbolic link in the '**/jffs/scripts/**' directory.

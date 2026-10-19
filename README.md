@@ -53,7 +53,7 @@ https://raw.githubusercontent.com/Martinski4GitHub/SendEmail/master/SendEmail.sh
 
 ### Installation via AMTM
 
-The SendEmail script can also be installed via AMTM (see '**se**' option).
+The **SendEmail** script can also be installed via AMTM (select the '**se**' option).
 
 
 The script file is installed in the '**/jffs/addons/SendEmail.d/**' directory with a symbolic link in the '**/jffs/scripts/**' directory.

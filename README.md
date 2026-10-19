@@ -87,9 +87,9 @@ To send emails, there are 3 basic calls:
 ### Removing Temporary Files
 
 If the body of the email is set to be in a file located under the '/tmp/' directory:
-
+```bash
   -Body="/tmp/path/to/the/EmailBody.txt"
-
+```
 The file will be automatically deleted *after* the email is successfully sent. This is done to prevent the accumulation of these temporary files. Keep in mind that files under the '/tmp/' directory are considered volatile and, therefore, subject to deletion at any time, and SendEmail may be called by other 3rd-party scripts under various conditions.
 
 If, for any reason, you wish to preserve the body of the email *after* the email has been successfully sent, create the file in another location within a non-volatile filesystem.

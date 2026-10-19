@@ -1,13 +1,13 @@
 # SendEmail
 Shell script tool to send email notifications
 
-## v1.1.1
-### Updated on 2026-Oct-16
+## v1.1.2
+### Updated on 2026-Oct-19
 
 
 ## About
 
-The **SendEmail** script is a tool that makes it simple and easy to send email notifications from the CLI or from within any other script. It leverages the shared Custom Email Library script (**/jffs/addons/shared-libs/CustomEMailFunctions.lib.sh**) to send the emails, and the AMTM email configuration file which provides the user-defined email settings.
+The **SendEmail** script is a tool that makes it simple and easy to send email notifications from the CLI or from within any other script. It leverages the shared **Custom Email Library** script (**/jffs/addons/shared-libs/CustomEMailFunctions.lib.sh**) to send the emails, and the AMTM email configuration file which provides the user-defined email settings.
 
 
 ## License
@@ -35,7 +35,7 @@ Official SendEmail releases are maintained through this repository:
 
 ## Installation
 
-**Manual Installation**
+### Manual Installation
 
 1. To download the script to your router, use the following commands:
 
@@ -45,11 +45,16 @@ https://raw.githubusercontent.com/Martinski4GitHub/SendEmail/master/SendEmail.sh
 -o /jffs/scripts/SendEmail.sh && chmod a+x /jffs/scripts/SendEmail.sh
 ```
 
-2. To install the script, use the following command:
+2. The script must be installed using the following command:
 
 ```bash
  /jffs/scripts/SendEmail.sh -install
 ```
+
+### Installation via AMTM
+
+The **SendEmail** script can also be installed via AMTM (select the '**se**' option).
+
 
 The script file is installed in the '**/jffs/addons/SendEmail.d/**' directory with a symbolic link in the '**/jffs/scripts/**' directory.
 
@@ -83,6 +88,21 @@ To send emails, there are 3 basic calls:
 ```bash
  /jffs/scripts/SendEmail "Subject Line" -Body="/full/path/to/the/EmailBody.txt"
 ```
+
+### Removing Temporary Files
+
+If the body of the email is set to be in a file located under the '**/tmp/**' directory:
+
+```bash
+  -Body="/tmp/path/to/the/EmailBody.txt"
+```
+
+The file will be automatically deleted ***after*** the email is successfully sent. This is done to prevent the accumulation of such temporary files. Keep in mind that files under the '**/tmp/**' directory are considered volatile and, therefore, subject to deletion at any time, and SendEmail may be called by other 3rd-party scripts under various conditions.
+
+If, for any reason, you wish to preserve the body of the email ***after*** the email has been successfully sent, create the file in another location within a **non-volatile** filesystem.
+
+
+### Optional Arguments
 
 Other optional arguments are available if you want to add/change the "**From:**" sender ID, include an email title line, change the default format from **HTML** to **Plain Text**, or add a secondary email address that will receive emails along with the primary recipient.
 

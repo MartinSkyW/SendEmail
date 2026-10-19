@@ -45,11 +45,17 @@ https://raw.githubusercontent.com/Martinski4GitHub/SendEmail/master/SendEmail.sh
 -o /jffs/scripts/SendEmail.sh && chmod a+x /jffs/scripts/SendEmail.sh
 ```
 
-2. To install the script, use the following command:
+2. The script must be installed using the following command:
 
 ```bash
  /jffs/scripts/SendEmail.sh -install
 ```
+
+
+**Installation via AMTM**
+
+The SendEmail script tool can also be installed via AMTM (see '**se**' option).
+
 
 The script file is installed in the '**/jffs/addons/SendEmail.d/**' directory with a symbolic link in the '**/jffs/scripts/**' directory.
 

@@ -7,7 +7,7 @@ Shell script tool to send email notifications
 
 ## About
 
-The **SendEmail** script is a tool that makes it simple and easy to send email notifications from the CLI or from within any other script. It leverages the shared Custom Email Library script (**/jffs/addons/shared-libs/CustomEMailFunctions.lib.sh**) to send the emails, and the AMTM email configuration file which provides the user-defined email settings.
+The **SendEmail** script is a tool that makes it simple and easy to send email notifications from the CLI or from within any other script. It leverages the shared **Custom Email Library** script (**/jffs/addons/shared-libs/CustomEMailFunctions.lib.sh**) to send the emails, and the AMTM email configuration file which provides the user-defined email settings.
 
 
 ## License
